@@ -1,0 +1,22 @@
+{
+  "name": "Messages",
+  "version": "0.0.1",
+  "contributors": [
+    {
+      "name": "Steven Toth",
+      "email": "steve@toths.info"
+    }
+  ],
+  "description": "Programs to extract the messages data from an iPhone backup",
+  "main": "src/messages.js",
+  "license": "Copy-Left",
+  "bin": {
+    "messages": "./src/messages.js"
+  },
+  "dependencies": {
+    "binary": "^0.3.0",
+    "lodash": "^3.8.0",
+    "sqlite3": "3",
+    "utf8": "^2.1.0"
+  }
+}
