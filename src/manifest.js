@@ -90,7 +90,7 @@ function readBackupDatabase(fileName, cb) {
 
     rs.on('end', function() {
         if(cb && typeof cb == 'function') {
-            //cb(null);
+            cb(null);
         }
     });
 

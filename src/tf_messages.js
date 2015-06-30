@@ -7,22 +7,63 @@ var messages = require('./messages.js');
 
 
 var backupDir = process.argv[2];
+console.error(backupDir);
 
 var targetDir = process.argv[3];
 
 var grepString = 'Library/SMS';
 var smsData = {};
 m.readBackupDatabase(backupDir + '/' + 'Manifest.mbdb',function(record) {
-    if(record.path && record.path.indexOf(grepString) != -1) {
-       smsData[record.path] = record;
+    if(record == null) {
+        var dbPath = backupDir + '/' + smsData['Library/SMS/sms.db'].sha;
+
+        messages.dbInfo(dbPath).then(function(chats){
+            //console.log('chats '+ chats.length);
+            _.forEach(chats,function(chat){
+                //console.log(chat + ' messages ' + chat.messages.length);
+                if(chat.messages) {
+                    _.forEach(chat.messages, function (message) {
+                        if (message.attachments) {
+                            _.forEach(message.attachments, function (attachment) {
+                                //console.log(JSON.stringify(attachment));
+                                var fullFilename = attachment['filename'];
+                                if(fullFilename) {
+                                    //console.log(fullFilename);
+                                    if (fullFilename.indexOf('~/') == 0) {
+                                        fullFilename = fullFilename.slice('~/'.length);
+                                    }
+                                    if (fullFilename.indexOf('/var/mobile/') == 0) {
+                                        fullFilename = fullFilename.slice('/var/mobile/'.length);
+                                    }
+                                    //console.log(['fullFilename', fullFilename, smsData[fullFilename]]);
+                                    if (smsData[fullFilename]) {
+
+                                        attachment['sha'] = smsData[fullFilename]['sha'];
+                                        var filename = fullFilename.split('/');
+                                        if (filename && filename.length > 1) {
+                                            filename = filename[filename.length - 1];
+                                        }
+                                        console.log('cp "' + backupDir + '/' + attachment['sha'] + '" ' + targetDir + '/' + filename);
+
+                                    } else {
+                                        console.error("Can't find attachment in backup for " + fullFilename + ' ' + JSON.stringify(attachment));
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+            });
+
+        }).catch(function(error) {
+            console.error(error);
+        });
+
+
+    } else {
+        if (record.path && record.path.indexOf(grepString) != -1) {
+            smsData[record.path] = record;
+        }
     }
 });
-
-//execute some queries...
-
-
-// sms db file Library/SMS/sms.db
-
-var dbPath = backupDir + '/' + messages.smsData['Library/SMS/sms.db'].sha;
-
-var info = messages.dbInfo(dbPath);
