@@ -4,6 +4,7 @@ var m = require('./manifest.js');
 
 var messages = require('./messages.js');
 
+var fse = require('fs-extra');
 
 
 var backupDir = process.argv[2];
@@ -13,14 +14,30 @@ var targetDir = process.argv[3];
 
 var grepString = 'Library/SMS';
 var smsData = {};
+
+function writeChat(chat) {
+    writeObjectToFile(targetDir + '/chats/' + chat.ROWID + '.json',chat);
+}
+
+function writeObjectToFile(file, obj) {
+    fse.outputJsonSync(file,obj);
+}
+
+
 m.readBackupDatabase(backupDir + '/' + 'Manifest.mbdb',function(record) {
     if(record == null) {
         var dbPath = backupDir + '/' + smsData['Library/SMS/sms.db'].sha;
 
         messages.dbInfo(dbPath).then(function(chats){
-            //console.log('chats '+ chats.length);
+            // base/resource -> files referenced from message attachments
+            // base/chats/<<id>>.json
+            // base/chats.json -> chat ids
+            var ids = _.map(chats,function(chat){
+                return chat.ROWID;
+            });
+            writeObjectToFile(targetDir + '/chats.json',ids);
             _.forEach(chats,function(chat){
-                //console.log(chat + ' messages ' + chat.messages.length);
+                writeChat(chat);
                 if(chat.messages) {
                     _.forEach(chat.messages, function (message) {
                         if (message.attachments) {
@@ -44,6 +61,7 @@ m.readBackupDatabase(backupDir + '/' + 'Manifest.mbdb',function(record) {
                                             filename = filename[filename.length - 1];
                                         }
                                         console.log('cp "' + backupDir + '/' + attachment['sha'] + '" ' + targetDir + '/' + filename);
+                                        fse.copySync(backupDir+'/'+attachment['sha'], targetDir+'/resource/'+filename);
 
                                     } else {
                                         console.error("Can't find attachment in backup for " + fullFilename + ' ' + JSON.stringify(attachment));
