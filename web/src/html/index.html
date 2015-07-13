@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>iPhone Messages</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>iPhone Messages</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/messages.css" rel="stylesheet">
 
-    <script data-main="js/messages" src="js/require.js" async="true"></script>
+  <script data-main="js/messages.js" src="require.js" async="true"></script>
 </head>
+
 <body>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h1>Conversations</h1>
+      <div id="conversations-container"></div>
+
+    </div>
+
+    <div class="col-md-8">
+      <h1>Messages</h1>
+      <div id="messages-container"></div>
+    </div>
+
+  </div>
+
+</div>
 
 </body>
 </html>

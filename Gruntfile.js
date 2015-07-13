@@ -1,21 +1,32 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     clean: {
-      build: [ 'dist' ] 
+      build: [ 'dist' ]
     },
     bower: {
       dev: {
-        dest: 'dist/web/'
+        dest: 'dist',
+        js_dest: 'dist/js/',
+        css_dest: 'dist/css/',
+        less_dest: 'dist/',
+        options: {
+          packageSpecific: {
+            //'bootstrap': {
+            //  stripGlobBase: true
+            //}
+          }
+
+        }
       }
     },
     less: {
       development: {
         options: {
-          paths: [ 'dist/web/css','bower_components/bootstrap/less' ]
+          paths: [ 'web/src/css' ]
         },
         files: {
-           'dist/web/css/messages.css' : 'dist/web/css/messages.less',
-           'dist/web/css/bootstrap.css' : 'dist/web/less/bootstrap.less'
+           'dist/web/css/messages.css' : 'web/src/css/messages.less'
+
         }
       }
     },
@@ -23,9 +34,33 @@ module.exports = function(grunt) {
       main: {
         files: [
           {expand: true, cwd: 'web/src/' ,src: ['js/**'], dest: 'dist/web/'},
-          {expand: true, cwd: 'web/src/' ,src: ['css/**'], dest: 'dist/web/'},
-          {expand: true, cwd: 'web/src/html' ,src: ['**'], dest: 'dist/web/'}
+          {expand: true, cwd: 'web/src/html' ,src: ['**'], dest: 'dist/web/'},
+          {expand: true, cwd: 'bower_components/bootstrap/dist' ,src: ['**'], dest: 'dist/web/'},
+          {expand: true, cwd: 'bower_components/jquery/dist' ,src: ['**'], dest: 'dist/web/js'},
+          {expand: true, cwd: 'bower_components/requirejs' ,src: ['*.js'], dest: 'dist/web/'},
+          {expand: true, cwd: 'bower_components/lodash' ,src: ['*.js'], dest: 'dist/web/js'}
         ]
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['web/src/js/**','web/src/html**'],
+        tasks: ['copy'],
+        options: {
+        }
+      },
+      less: {
+        files: ['web/src/css/**'],
+        tasks: ['less'],
+        options: {
+        }
+      },
+    },
+    symlink: {
+      data: {
+        dest: 'dist/web/data',
+        relativeSrc: '../../data/out',
+        options: {type: 'dir'}
       }
     }
   });
@@ -35,8 +70,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');  
   grunt.loadNpmTasks('grunt-bowercopy');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-symlink');
 
-  grunt.registerTask('default', ['clean','copy','bower','less']);
+  grunt.registerTask('default', ['clean','copy','less','symlink']);
 };
 
 

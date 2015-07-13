@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "bootstrap": "~3.3.5",
-    "requirejs": "~2.1.18"
+    "requirejs": "~2.1.18",
+    "lodash": "^3.8.0"
   }
 }

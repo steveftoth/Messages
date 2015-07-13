@@ -33,7 +33,7 @@ m.readBackupDatabase(backupDir + '/' + 'Manifest.mbdb',function(record) {
             // base/chats/<<id>>.json
             // base/chats.json -> chat ids
             var ids = _.map(chats,function(chat){
-                return chat.ROWID;
+                return { id: chat.ROWID , chat_identifier: chat.chat_identifier, handles: chat.handles};
             });
             writeObjectToFile(targetDir + '/chats.json',ids);
             _.forEach(chats,function(chat){
