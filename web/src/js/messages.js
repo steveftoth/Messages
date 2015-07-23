@@ -10,13 +10,11 @@ requirejs.config({
   }
 });
 
-require(['jquery','bootstrap','lodash'], function($, bootstrap,_) {
+require(['jquery','bootstrap','lodash', 'moment.min'], function($, bootstrap, _, moment) {
 
-  function toDateFromCFDate(date) {
-    if(date && typeof date == 'number')
-      return new Date(date*1000 + 978307200000);
-    return date;
-  }
+  var dateFormat = 'MMM Do YY';
+
+  var dateTimeFormat = 'MMM Do YY, h:mm:ss a';
 
   function calcPath(attachment) {
     return 'data/resource/' + _.last(attachment.filename.split('/'));
@@ -40,7 +38,7 @@ require(['jquery','bootstrap','lodash'], function($, bootstrap,_) {
             var messageText = message.text;
             if (!messageText)
               messageText = '';
-            var mt = $('<li/>' +  + '</li>',{'class':'list-group-item', text: toDateFromCFDate(message.date).toLocaleString() + ' - ' + messageText , title: JSON.stringify(message)});
+            var mt = $('<li/>' +  + '</li>',{'class':'list-group-item', text: moment(message.date).format(dateTimeFormat) + ' - ' + messageText , title: JSON.stringify(message)});
             if(message['is_from_me'] == 1)
               mt.addClass('message-from-me');
             else
@@ -50,7 +48,7 @@ require(['jquery','bootstrap','lodash'], function($, bootstrap,_) {
               _.each(message.attachments,function(attachment){
                 //console.log(attachment);
                 if(attachment['mime_type'].indexOf('image') >= 0 ) {
-                  console.log(['attaching',attachment]);
+                  ///console.log(['attaching',attachment]);
                   mc.append('<img src=' + calcPath(attachment) + ' >')
                   //$('<img/>',{
                   //  src: calcPath(attachment)
@@ -64,18 +62,19 @@ require(['jquery','bootstrap','lodash'], function($, bootstrap,_) {
   }
 
   function showChats(chats) {
-    console.log(chats);
-    var list = $('<ul/>', {'class':'dropdown-menu', 'aria-labelledby': 'dropdownMenu1'} );
-    $('<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
-    'Conversations <span class="caret"></span></button>' ) .appendTo('#conversations-container')
-    list.appendTo('#conversations-container');
+    chats.sort(function(a,b){ //reverse sort by end date, newest updated convs on top
+      return moment(b.endDate).diff(moment(a.endDate));
+    });
 
-    var messageList = _.map(chats,function( chat ) {
+    var messageList = _.each(chats,function( chat ) {
       var id = chat.id;
       var title = chat.chat_identifier;
-      $('<a/>', { text: title , click: function() {
+      var chatTitle = $('<a/>', { text: title , click: function() {
         showConversation(id);
-      }}).appendTo($('<li/>').appendTo(list));
+      }}).appendTo($('<li/>').appendTo('#conversations-list'));
+      chatTitle.append($('<div/>',{text: moment(chat.startDate).format(dateFormat) + ' - ' + moment(chat.endDate).format(dateFormat)})
+          .append($('<span/>', {text: chat.count, class: 'badge chat-badge'})));
+
     });
 
 

@@ -21,8 +21,8 @@ function handlesForChat(chat) {
 
 function toDateFromCFDate(date) {
     if(date && typeof date == 'number')
-        return new Date(date*1000 + 978307200000).toLocaleString();
-    return date;
+        return new Date(date*1000 + 978307200000);
+    return undefined;
 }
 
 function fillMessage(db, message) {
@@ -73,7 +73,7 @@ function dbInfo(dbPath) {
 }
 
 module.exports.dbInfo = dbInfo;
-
+module.exports.toDateFromCFDate = toDateFromCFDate;
 // sms db file Library/SMS/sms.db
 
 /*

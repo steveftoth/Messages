@@ -38,13 +38,14 @@ module.exports = function(grunt) {
           {expand: true, cwd: 'bower_components/bootstrap/dist' ,src: ['**'], dest: 'dist/web/'},
           {expand: true, cwd: 'bower_components/jquery/dist' ,src: ['**'], dest: 'dist/web/js'},
           {expand: true, cwd: 'bower_components/requirejs' ,src: ['*.js'], dest: 'dist/web/'},
-          {expand: true, cwd: 'bower_components/lodash' ,src: ['*.js'], dest: 'dist/web/js'}
+          {expand: true, cwd: 'bower_components/lodash' ,src: ['*.js'], dest: 'dist/web/js'},
+          {expand: true, cwd: 'bower_components/moment/min' ,src: ['*.js'], dest: 'dist/web/js'}
         ]
       }
     },
     watch: {
       scripts: {
-        files: ['web/src/js/**','web/src/html**'],
+        files: ['web/src/js/**','web/src/html/**'],
         tasks: ['copy'],
         options: {
         }
